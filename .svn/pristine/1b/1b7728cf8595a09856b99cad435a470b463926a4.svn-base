@@ -1,0 +1,105 @@
+<html>
+<head>
+<title>EasyUI</title>
+<meta charset="UTF-8">
+<script src="/easyui/jquery.min.js" type="text/javascript"></script>
+<script src="/easyui/jquery.easyui.min.js" type="text/javascript"></script>
+<link href="/easyui/themes/default/easyui.css" rel="stylesheet"
+	type="text/css" />
+<link href="easyui//themes/icon.css" rel="stylesheet" type="text/css" />
+
+</head>
+<script type="text/javascript" charset="utf-8">
+	$(document).ready(function() {
+
+		$("#search").click(function() {
+
+			/* $.ajax({
+				url : "/divide/divideType",
+				data : {
+					keyword : $("#keyword").val()
+				}
+			
+
+			}); */
+			$("#divideType").datagrid("reload",{
+				keyword : $("#keyword").val()
+			})
+			
+		});
+
+	});
+
+	var datagrid;
+	$(function() {
+		$("#divideType").datagrid({
+			url : "/divide/divideType",
+			title : "Divide Type",
+			pageSize : 5,
+			pageList : [ 5, 20, 30, 40 ],
+			fitColimns : true,
+			//queryParams:
+			nowarp : false,
+			border : false,
+			idField : "id",
+			columns : [ [ {
+				title : "编号",
+				field : "id",
+				width : 100
+			}, {
+				title : "上游比例",
+				field : "top",
+				width : 100
+			}, {
+				title : "下游比例",
+				field : "down",
+				width : 100
+			}, {
+				title : "别名",
+				field : "name",
+				width : 120
+			}, {
+				title : "备注",
+				field : "rmark",
+				width : 100
+			}, ] ]
+
+		});
+	});
+</script>
+<script type="text/javascript">
+	
+</script>
+<body>
+
+
+	<h2>DIVIDE</h2>
+	
+
+	<table id="divideType" class="easyui-datagrid"
+		style="width: 700px; height: 250px" title="Searching"
+		iconCls="icon-search" toolbar="#tb" toolbar="#tc" rownumbers="true"
+		pagination="true">
+		<thead>
+			<tr>
+
+			</tr>
+		</thead>
+	</table>
+	<div id="tb" style="padding: 3px">
+		<span>Key Word:</span> <input id="keyword"
+			style="line-height: 26px; border: 1px solid #ccc"> <input
+			type="button" id="search" name="search" plain="true"
+			class="easyui-linkbutton" value="search">
+		<!-- <a href="#" id="search" class="easyui-linkbutton" plain="true">Search</a> -->
+	</div>
+	<div id="tc">
+		<a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true"
+			onclick="javascript:alert('Add')">Add</a> <a href="#"
+			class="easyui-linkbutton" iconCls="icon-cut" plain="true"
+			onclick="javascript:alert('Cut')">Cut</a> <a href="#"
+			class="easyui-linkbutton" iconCls="icon-save" plain="true"
+			onclick="javascript:alert('Save')">Save</a>
+	</div>
+</body>
+</html>

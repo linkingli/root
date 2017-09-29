@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/js/jquery.easyui.min.js"></script>
+<link href="/js/icon.css" rel="stylesheet" />
+<link href="/js/default/easyui.css" rel="stylesheet" />
+<link href="/easyui/themes/icon.css" rel="stylesheet" />
+</head>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#divideTypeGrid').datagrid({
+			height : '100%',
+			url : '/cost/selectAll',
+			method : 'POST',
+			
+			title : '成本分摊模板',
+			striped : true,
+			fitColumns : true,
+			singleSelect : false,
+			rownumbers : true,
+			pagination : true,
+			nowrap : false,
+			pageSize : 10,
+			pageList : [ 10, 20, 50, 100, 150, 200 ],
+			showFooter : true,
+			columns : [ [ {
+				field : 'ck',
+				checkbox : true
+			},{
+				field : 'monthSizeStart',
+				title : '存量开始月',
+				width : '200px',
+				align : 'left'
+			},{
+				field : 'monthSizeEnd',
+				title : '存量结束月',
+				width : '200px',
+				align : 'left'
+			},{
+				field : 'top',
+				title : '上游比例',
+				width : '200px',
+				align : 'left'
+			}, {
+				field : 'down',
+				title : '下游比例',
+				width : '200px',
+				align : 'left'
+			}, {
+				field : 'name',
+				title : '别名',
+				width : '200px',
+				align : 'left'
+			}, {
+				field : 'rmark',
+				title : '备注',
+				width : '300px',
+				align : 'left'
+			} ] ],
+			toolbar : [{
+				iconCls : 'icon-add',
+				text : '添加',
+				handler : function(){
+					$('#editOrAdd').dialog({
+						height : '50%',
+						width : '25%',
+						modal : true,
+						title : '模板新增',
+						draggable : false,
+						buttons : [{
+							text : '提交',
+							handler : function(){
+								$.ajax({
+									url:'/cost/insertoradd',
+									dateType:'json',
+									type:'POST',
+									data:{
+										monthSizeStart:$("#monthSizeStart").val(),
+										monthSizeEnd:$("#monthSizeEnd").val(),
+										top:$("#top").val(),
+										down:$("#down").val(),
+										name:$("#name").val(),
+										rmark:$("#rmark").val()+""
+									},
+									success:function(){
+										window.location.href="divide_type.html";
+									},error:function(){
+										alert("failed")
+									}
+								})
+							}
+						},{
+							text : '取消',
+							handler : function(){
+								window.location.href="divide_type.html";
+							}
+						}],
+					});
+				}
+			},{
+				iconCls : 'icon-edit',
+				text : '编辑',
+				handler : function(){
+					 var rows = $('#divideTypeGrid').datagrid('getSelected');//获取到复选框勾选的数据
+					 	
+					 	$("#monthSizeStart").val(rows.monthSizeStart);
+						$("#monthSizeEnd").val(rows.monthSizeEnd);
+						$("#top").val(rows.top);
+						$("#down").val(rows.down);
+						$("#name").val(rows.name);
+						$("#rmark").val(rows.rmark);
+						
+					$('#editOrAdd').dialog({
+						height : '50%',
+						width : '25%',
+						modal : true,
+						title : '模板编辑',
+						draggable : false,
+						buttons : [{
+							text : '提交',
+							handler : function(){
+								
+								$.ajax({
+									url:'/cost/insertoradd',
+									dateType:'json',
+									type:'POST',
+									data:{
+										id:rows.id,
+										monthSizeStart:$("#monthSizeStart").val(),
+										monthSizeEnd:$("#monthSizeEnd").val(),
+										top:$("#top").val(),
+										down:$("#down").val(),
+										name:$("#name").val(),
+										rmark:$("#rmark").val()+""
+									},
+									success:function(){
+										window.location.href="divide_type.html"; 
+									},error:function(){
+										alert("failed")
+									}
+									
+								})
+								function closewin(){
+									window.close();
+								}
+							}
+						},{
+							text : '取消',
+							handler : function(){
+								window.location.href="divide_type.html";
+							}
+						}],
+					});
+				}
+			},{
+				iconCls : 'icon-remove',
+				text : '删除',
+				handler : function(){
+					var rows = $('#divideTypeGrid').datagrid('getSelections');//获取到复选框勾选的数据ID
+					if(rows != null && rows != ""){//判断页面中的复选框是否勾选
+						$.messager.confirm('提示', '确定删除这些数据吗?', function(r){
+							if (r){
+								var list="";
+								for (var i = 0; i < rows.length; i++) {//遍历所有勾选的数据的ID
+									list+=rows[i].id+",";//将ID拼接成一个字符串数组
+								}
+								$.ajax({
+									url:'/cost/deleteById', 
+									dataType:'json',
+									type:'post',
+									data:{
+										id:list 
+									},
+									success:function(msg){//操作成功后的操作
+										window.location.reload();//刷新当前页面  更新页面与数据库的数据
+									}
+								});
+							}
+						}
+						);
+					}else{
+						alert("请选择您要删除的数据！");
+					}
+				}
+			}]
+		});
+		$('#divideTypeGrid').load();
+	});
+</script>
+<body class="easyui-layout" data-options="fit:true">
+	<div id="divideTypeGrid"></div>
+	<div id="editOrAdd" style="display: none;">
+		<table style="margin: 0 auto">
+			<tr align="center" height="50px">
+				<th align="right">存量开始月：</th>
+				<td align="left"><input id="monthSizeStart" class="easyui-validatebox" type="text"></td>
+			</tr>
+			<tr align="center" height="50px">
+				<th align="right">存量结束月：</th>
+				<td align="left"><input id="monthSizeEnd" class="easyui-validatebox"></td>
+			</tr>
+			<tr align="center" height="50px">
+				<th align="right">上游比例：</th>
+				<td align="left"><input id="top" class="easyui-validatebox"></td>
+			</tr>
+			<tr align="center" height="50px">
+				<th align="right">下游比例：</th>
+				<td align="left"><input id="down" class="easyui-validatebox"></td>
+			</tr>
+			<tr align="center" height="50px">
+				<th align="right">别名：</th>
+				<td align="left"><input id="name" class="easyui-validatebox"></td>
+			</tr>
+			<tr>
+				<th align="right">备注：</th>
+				<td align="left"><textarea id="rmark" rows="4" cols="22"></textarea></td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>

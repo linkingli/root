@@ -1,0 +1,10 @@
+package cn.ssm.service.master.divide;
+
+import java.util.List;
+
+import cn.ssm.vo.DivideVO;
+
+public interface DivideService {
+	
+	public List<DivideVO> selectAll();
+}

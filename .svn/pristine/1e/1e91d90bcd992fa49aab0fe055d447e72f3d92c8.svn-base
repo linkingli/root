@@ -1,0 +1,42 @@
+package cn.ssm.entity;
+
+public class Divide {
+
+	private String id;
+	private String channelTopId;
+	private String channelDownId;
+	private String productId;
+	private String typeId;
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getChannelTopId() {
+		return channelTopId;
+	}
+	public void setChannelTopId(String channelTopId) {
+		this.channelTopId = channelTopId;
+	}
+	public String getChannelDownId() {
+		return channelDownId;
+	}
+	public void setChannelDownId(String channelDownId) {
+		this.channelDownId = channelDownId;
+	}
+	public String getProductId() {
+		return productId;
+	}
+	public void setProductId(String productId) {
+		this.productId = productId;
+	}
+	public String getTypeId() {
+		return typeId;
+	}
+	public void setTypeId(String typeId) {
+		this.typeId = typeId;
+	}
+	
+	
+}

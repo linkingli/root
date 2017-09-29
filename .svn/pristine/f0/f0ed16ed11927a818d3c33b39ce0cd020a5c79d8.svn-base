@@ -1,0 +1,131 @@
+package cn.ssm.controller.channel;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import cn.ssm.entity.ChannelTop;
+import cn.ssm.entity.channel.ChannelType;
+import cn.ssm.entity.channel.PageBean;
+import cn.ssm.service.master.ChannelTopService;
+import cn.ssm.utils.UUIDUtils;
+
+/**
+ * @Title: ChannelController.java
+ * @Package cn.ssm.controller.channel
+ * @Description: 上游渠道数据的CURD
+ * @author 二组
+ * @date 2017年9月21日
+ * @version V1.0
+ */
+@RestController
+@RequestMapping(value = "/channelTop")
+public class ChannelTopDataController {
+	@Autowired
+	ChannelTopService channelTopService;
+	
+
+	@RequestMapping(value ="/add")
+	public ChannelTop add(ChannelTop top) {
+		if(top.getId()==null||"".equals(top.getId())){
+			top.setId(UUIDUtils.getUUID());
+			return channelTopService.insertTop(top);
+		}else{
+			return channelTopService.updateTop(top);
+		}
+	}
+
+	/**
+	 * 获取要实体数据 可以用于修改数据时的回显
+	 * 
+	 * @param id
+	 *            id
+	 * @return 实体
+	 */
+	@RequestMapping(value = "select")
+	public ChannelTop select(String id) {
+		return channelTopService.selectByPrimaryKey(id);
+	}
+
+	/**
+	 * 删除某条记录
+	 * 
+	 * @param id
+	 *            id
+	 * @return 影响行数
+	 */
+	@RequestMapping(value = "delete")
+	public Integer delete(String id) {
+		return channelTopService.deleteByPrimaryKey(id);
+	}
+
+	/**
+	 * 修改后的实体数据更新到数据库中去
+	 * 
+	 * @param top
+	 *            用来封装数据的实体
+	 * @return 影响行数
+	 */
+	@RequestMapping(value = "update")
+	public Integer update(ChannelTop top) {
+		return channelTopService.updateBySelective(top);
+	}
+
+	/**
+	 * 通过渠道名称模糊查询
+	 * 
+	 * @param string
+	 *            搜索关键字
+	 * @return 上游渠道实体的列表
+	 * @author 张长江
+	 */
+	@RequestMapping("/selectByChannelName")
+	public List<ChannelTop> selectByChannelName(String string) {
+		return channelTopService.selectByChannelName(string);
+	}
+
+	/**
+	 * 通过渠道类型模糊查询
+	 * 
+	 * @param string
+	 *            搜索关键字
+	 * @return 上游渠道实体的列表
+	 * @author 张长江
+	 */
+	@RequestMapping("/selectByChannelType")
+	public List<ChannelType> selectByChannelType(String string) {
+		return channelTopService.selectByChannelType(string);
+
+	}
+
+	/**
+	 * 分页模糊查找上游
+	 * 
+	 * @author 韩超
+	 * @param page 当前页
+	 * @param rows 每页显示条数
+	 * @param kw 关键字          
+	 * @param type 类型         
+	 * @return
+	 */
+	@RequestMapping(value = "findTopByConditionPages")
+
+	public PageBean<ChannelTop> findTopByConditionPages(Integer page,Integer rows,
+			ChannelTop channelTop) {
+		if ("".equals(channelTop.getChannelType())) {
+			channelTop.setChannelType(null);
+		}
+		PageBean<ChannelTop> bean = channelTopService.findByConditionPages(page,rows,channelTop);
+
+		return bean;
+	}
+	@RequestMapping("/queryCp")
+	public List<ChannelTop> queryCp(){
+		return channelTopService.queryCp();
+	}
+	
+	
+}

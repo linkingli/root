@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.ssm.mapper.master.ProductMapper"> 
+  <resultMap id="pruResultMap" type="cn.ssm.entity.Product">  
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="channel_id" jdbcType="VARCHAR" property="channel_id" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="product_name" jdbcType="VARCHAR" property="product_name" />
+  </resultMap>
+  <!-- 按产品ID查询 -->
+  <select id="queryProductById" parameterType="string" resultMap="pruResultMap"> 
+		select * from product 
+		where  id=#{id}
+  </select>
+  <!-- 按条件查询 总条数-->
+  <select id="count" parameterType="cn.ssm.entity.Product" resultType="int">	
+		select COUNT(id) from product 
+		where 1=1
+		<if test="id != '' and id != null">
+			and id = #{id}
+		</if>
+		<if test="channel_id != '' and channel_id != null">
+			and channel_id = #{channel_id}
+		</if>
+		<if test="price !='' and price != null">
+			and price = #{price}
+		</if>
+		<if test="product_name !='' and product_name != null">
+			and product_name like #{product_name}
+		</if>
+  </select> 
+  <!-- 按条件查询 -->
+  <select id="selectByCondition" parameterType="cn.ssm.entity.Product" resultMap="pruResultMap">
+		select * 
+		from product where 1=1
+		<if test="arg0.id != '' and arg0.id != null">
+			and id = #{arg0.id}
+		</if>
+		<if test="arg0.channel_id != '' and arg0.channel_id != null">
+			and channel_id = #{arg0.channel_id}
+		</if>
+		<if test="arg0.price !='' and arg0.price != null">
+			and price = #{arg0.price}
+		</if>
+		<if test="arg0.product_name !='' and arg0.product_name != null">
+			and product_name like #{arg0.product_name}
+		</if>
+		 LIMIT #{arg1},#{arg2} 	
+  </select> 
+  <!-- 模糊查询 -->
+ <!--  <select id="selectByVague" parameterType="string" resultMap="pruResultMap">
+		select * from product 
+		where
+		product_name like #{key}
+	
+  </select> -->
+  <!-- 新增产品信息 -->
+  <insert id="addProduct" parameterType="cn.ssm.entity.Product">
+		insert into product
+		(id,channel_id,price,product_name)
+		values
+		(
+			#{id},
+			#{channel_id, jdbcType=VARCHAR},
+			#{price, jdbcType=DECIMAL},
+			#{product_name, jdbcType=VARCHAR}
+		)
+  </insert>
+  <!-- 修改产品信息 -->
+  <update id="updateProduct" parameterType="cn.ssm.entity.Product">
+		update product
+		<set>
+			<if test="channel_id != null">channel_id=#{channel_id},</if>
+			<if test="price != null">price=#{price},</if>
+			<if test="product_name != null">product_name=#{product_name},</if>
+		</set>
+		where id=#{id}
+  </update>
+  <!-- 单条删除产品 -->
+  <delete id="deleteProductById" parameterType="string">
+		delete from product
+		where id=#{id}
+  </delete>
+  <!-- 多条删除产品 -->
+  <delete id="deleteProductList" parameterType="string">
+		delete from product
+		where id in
+		<foreach collection="array" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+  </delete>
+</mapper>

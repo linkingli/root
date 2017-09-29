@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/js/jquery.easyui.min.js"></script>
+<link href="/js/icon.css" rel="stylesheet" />
+<link href="/js/default/easyui.css" rel="stylesheet" />
+<link href="/easyui/themes/icon.css" rel="stylesheet" />
+</head>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#divideGrid').datagrid({
+			height : '100%',
+			url : '/divide/getall',
+			method : 'POST',
+			idField : 'id',
+			title : '成本分摊配置',
+			striped : true,
+			fitColumns : true,
+			singleSelect : true,
+			rownumbers : true,
+			pagination : true,
+			nowrap : false,
+			pageSize : 10,
+			pageList : [ 10, 20, 50, 100, 150, 200 ],
+			showFooter : true,
+			columns : [ [ {
+				field : 'ck',
+				checkbox : true
+			}, {
+				field : 'product',
+				title : '产品名称',
+				width : 180,
+				align : 'left',
+				formatter : function (val){
+					if(val){
+						return val.product_name;
+					}
+				}
+			}, {
+				field : 'channelTop',
+				title : '上游名称',
+				width : 150,
+				align : 'left',
+				formatter : function (val){
+					if(val){
+						return val.channelName;
+					}
+				}
+			}, {
+				field : 'channelDown',
+				title : '下游名称',
+				width : 100,
+				align : 'left',
+				formatter :function(val){
+					if(val){
+						return val.channelName;
+					}
+				}
+			}, {
+				field : 'divideType',
+				title : '类型',
+				width : 100,
+				align : 'left',
+				formatter : function(val){
+					if(val){
+						return val.name;
+					}
+				}
+			} ] ],
+			toolbar : [{
+				iconCls : 'icon-add',
+				text : '新增',
+				handler : function(){
+					$('#editOrAnd').dialog({
+						height : '50%',
+						width : '25%',
+						modal : true,
+						title : '成本分摊新增',
+						draggable : false,
+						buttons : [{
+							text : '提交',
+							handler : function(){
+								$.ajax({
+									url : '/divide/insert',
+									cache : false,
+									data : {
+										productId : $('#product').combobox('getValue'),
+										channelTopId : $('#channelTop').combobox('getValue'),
+										channelDownId : $('#channelDown').combobox('getValue'),
+										typeId : $('#type').combobox('getValue')
+									},
+									success : function(){
+										window.location.href="divide.html";
+									}
+								});
+							}
+						},{
+							text : '取消',
+							handler : function(){
+								
+							}
+						}],
+						/* onOpen : function(){
+							$('#product').combobox('setText', "");
+							$('#channelTop').combobox('setText', "");
+							$('#channelDown').combobox('setValue', "");
+							$('#type').combobox('setValue', "");
+						} */
+					});
+				}
+			},{
+				iconCls : 'icon-edit',
+				text : '编辑',
+				handler : function(){
+					var row = $('#divideGrid').datagrid('getSelected');
+					$('#product').combobox('select', row.product.product_name);
+					$('#product').combobox('setValue', row.product.id);
+					$('#channelTop').combobox('select',row.channelTop.channelName);
+					$('#channelTop').combobox('setValue', row.channelTop.id);
+					$('#channelDown').combobox('select',row.channelDown.channelName);
+					$('#channelDown').combobox('setValue', row.channelDown.id);
+					$('#type').combobox('select',row.divideType.name);
+					$('#type').combobox('setValue', row.divideType.id);
+					$('#divideId').val(row.id);
+					var row = $('#divideGrid').datagrid('getSelected');
+					if(row == null){
+						$.messager.confirm('提示', '请选择一条数据进行操作');
+					}else{
+						$('#editOrAnd').dialog({
+							height : '50%',
+							width : '25%',
+							modal : true,
+							title : '成本分摊编辑',
+							draggable : false,
+							singleSelect : true,
+							buttons : [{
+								text : '提交',
+								handler : function(){
+									$.ajax({
+										url : '/divide/update',
+										data : {
+											id : $('#divideId').val(),
+											productId : $('#product').combobox('getValue'),
+											channelTopId :$('#channelTop').combobox('getValue'),
+											channelDownId : $('#channelDown').combobox('getValue'),
+											typeId : $('#type').combobox('getValue')
+										},
+										success :function(){
+											window.location.href="divide.html";
+										}
+									});
+								}
+							},{
+								text : '取消',
+								handler : function(){
+								}
+							}],							
+							onClose : function(){								
+								$('#product').combobox('setText', "");
+								$('#channelTop').combobox('setText', "");
+								$('#channelDown').combobox('setValue', "");
+								$('#type').combobox('setValue', "");
+							}
+						});
+					}
+				}
+			},{
+				iconCls : 'icon-remove',
+				text : '删除',
+				handler : function(){
+					var row1 = $('#divideGrid').datagrid('getSelected');
+					if(row1 == null){
+						$.messager.confirm('提示', '请选择一条数据进行操作');
+					}else{
+						$.messager.confirm('提示', '确定要删除这条数据吗?', function(r){
+							if (r){
+								$.ajax({
+									url : '/divide/delete',
+									data : {
+										id : row1.id
+									},
+									success : function(){
+										window.location.href="divide.html";
+									}
+								});
+							}
+						});
+					}
+				}
+			}]
+		});
+		$('#divideGrid').load();
+	});
+</script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#product').combobox({
+			url : '/product/selectAll',
+			valueField : 'id',
+			textField : 'product_name'
+		});
+		$('#channelTop').combobox({
+			url : '/channelTop/selectAll',
+			valueField : 'id',
+			textField : 'channelName'
+		});
+		$('#channelDown').combobox({
+			url : '/channelDown/selectAll',
+			valueField : 'id',
+			textField : 'channelName'
+		});
+		$('#type').combobox({
+			url : '/cost/selectAll',
+			valueField : 'id',
+			textField : 'name'
+		});
+	});
+</script>
+<!-- <script type="text/javascript">
+	$(document).ready(function(){
+		$('#editOrAnd').dialog({
+			onOpen : function(){
+				alert('111');
+			}
+		});
+			
+	});
+</script> -->
+<body class="easyui-layout" data-options="fit:true">
+	<div id="divideGrid"></div>
+	<div id="editOrAnd">
+		<table style="margin: 0 auto;">
+			<tr><input id="divideId" type="hidden" /></tr>
+			<tr align="center" height="80px">
+				<th align="right">产品名称：</th>
+				<td align="left">
+					<select id="product" class="easyui-combobox" style="width: 200px">
+						<option id="defaultproduct"></option>
+					</select>
+				</td>
+			</tr>
+			<tr align="center" height="80px">
+				<th align="right">上游名称：</th>
+				<td align="left">
+					<select id="channelTop" class="easyui-combobox" style="width: 200px">
+					</select>
+				</td>
+			</tr>
+			<tr align="center" height="80px">
+				<th align="right">下游名称：</th>
+				<td align="left">
+					<select id="channelDown" class="easyui-combobox" style="width: 200px">
+					</select>
+				</td>
+			</tr>
+			<tr align="center" height="80px">
+				<th align="right">类型：</th>
+				<td align="left">
+					<select id="type" class="easyui-combobox" style="width: 200px">
+					</select>
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+</body>
+</html>

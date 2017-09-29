@@ -1,0 +1,40 @@
+server:
+  port: 8080
+  context-path: /
+spring:
+  http:
+    encoding:
+      charset: utf-8
+      enable: true
+      fore: true
+  mvc:
+    static-path-pattern: /**
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/
+
+logging:
+  #日志文件
+  file: log.log
+  level: debug
+druid:
+  #type: com.alibaba.druid.pool.DruidDataSource
+  #主数据源
+  master:
+    url: jdbc:mysql://120.77.214.89/data_cd?characterEncoding=UTF-8&useSSL=true&autoReconnect=true&zeroDateTimeBehavior=convertToNull&useUnicode=true
+    driverClassName: com.mysql.jdbc.Driver
+    username: root
+    password: YndnYMcqDV5m
+    initial-size: 5
+    min-idle: 1
+    max-active: 100
+    test-on-borrow: true
+  #从数据源
+  slave:
+    url: jdbc:mysql:///data_cd?characterEncoding=UTF-8&useSSL=true&autoReconnect=true&zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8
+    driverClassName: com.mysql.jdbc.Driver
+    username: root
+    password: YndnYMcqDV5m
+    initial-size: 5
+    min-idle: 1
+    max-active: 100
+    test-on-borrow: true

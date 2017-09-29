@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/js/jquery.easyui.min.js"></script>
+<link href="/js/icon.css" rel="stylesheet" />
+<link href="/js/default/easyui.css" rel="stylesheet" />
+</head>
+<script type="text/javascript">
+	var selectTempRows=[];
+	$(document).ready(function() {
+		/*
+			function doSearch() {
+				$("#productTable").datagrid("reload", {
+					channel_id : $('#itemid').val(),
+					product_name : $('#productid').val()
+				})
+			}); */
+
+		//表格展示
+		$("#productTable").datagrid({
+			height : '100%',
+			url : "/product/queryByCondition",
+			method : 'POST',
+			queryParams : {
+
+			},
+			idField : 'id',
+			striped : true,
+			fitColumns : true,
+			singleSelect : false,
+			rownumbers : true,
+			pagination : true,
+			nowrap : false,
+			pageSize : 10,
+			pageList : [ 10, 20, 50, 100, 150, 200 ],
+			showFooter : true,
+			title : "产品信息",
+			toolbar : "#itop",
+			columns : [ [ {
+				field : 'ck',
+				checkbox : true
+			}, {
+				title : "编号",
+				field : "id",
+				width : 50
+			}, {
+				title : "上游渠道名",
+				field : "channel_id",
+				width : 50
+			}, {
+				title : "价格",
+				field : "price",
+				width : 50
+			}, {
+				title : "产品名",
+				field : "product_name",
+				width : 100
+			},{
+					title:"操作",
+					field:'update',
+					width:100,
+					formatter: function(value,row,index){
+						selectTempRows[index]=row;
+						return '<a href="#" onclick="updateProduct('+index+')">修改</a> | '	+'<a href="#" onclick="deleteProduct('+index+')">删除</a>';	
+					}
+			}] ]
+		});
+		
+		//加载
+		$('#productTable').load();
+		
+
+	});
+	//搜索
+	function doSearch(){
+		$('#productTable').datagrid('load',{
+			channel_id: $('#itemid').val(),
+			product_name: $('#keyword').val()
+		});
+	}
+	//新增
+	function insertProduct() {
+		$('#editOrAdd').dialog({
+			height : '50%',
+			width : '25%',
+			modal : true,
+			title : '新增产品',
+			draggable : false,
+			buttons : [ {
+				text : '提交',
+				handler : function() {
+					$.ajax({
+						url:"/product/add",
+						type:"GET",
+						dataType:"json",
+						data:{
+							channel_id:$('#channel_id').val(),
+							price:$('#price').val(),
+							product_name:$('#product_name').val()
+						},
+						success:function(product){
+								if(product!=null){
+									alert("新增成功！");
+									$("#productTable").datagrid('load')
+								}else{
+									alert("新增失败！"); 
+								}
+						},
+						error:function(){
+								alert("新增失败！"); 
+						}	
+					})
+				}
+			}, {
+				text : '取消',
+				handler : function() {
+					location.replace(document.referrer);
+				}
+			} ],
+		});
+	};
+	//修改
+		function updateProduct(index){ 
+		$("#channel_id").val(selectTempRows[index].channel_id),
+		$("#price").val(selectTempRows[index].price),
+		$("#product_name").val(selectTempRows[index].product_name),
+		$('#editOrAdd').dialog({
+			height : '50%',
+			width : '25%',
+			modal : true,
+			title : '修改产品',
+			draggable : false,
+			buttons : [ {
+				text : '提交',
+				handler : function() {
+					$.ajax({
+						url:"/product/update",
+						type:"GET",
+						dataType:"json",
+						data:{
+							id: selectTempRows[index].id,
+							channel_id:$('#channel_id').val(),
+							price:$('#price').val(),
+							product_name:$('#product_name').val()
+						},
+						success:function(product){
+								if(product!=null){
+									alert("修改成功！");
+									$("#productTable").datagrid('load')
+								}else{
+									alert("修改失败！"); 
+								}
+						},
+						error:function(){
+								alert("修改失败！"); 
+						}	
+					})
+				}
+			}, {
+				text : '取消',
+				handler : function() {
+
+				}
+			} ],
+		}); 
+	};
+	//单行删除
+	function deleteProduct(index){ 
+		 $.messager.confirm('提示', '是否删除选中数据?', function (r) {  
+             if (!r) {  
+                 return;  
+             } 
+					$.ajax({
+						url:"/product/deleteById",
+						type:"GET",
+						dataType:"json",
+						data:{
+							id:selectTempRows[index].id
+						},
+						success:function(i){
+								if(i>0){
+									alert("删除成功！");
+									 $("#productTable").datagrid('load') 
+								}else{
+									alert("删除失败！"); 
+								}
+						},
+						error:function(){
+								alert("删除失败！"); 
+						}	
+			}) 
+		 })
+		 
+	}
+	//多行删除
+	function deleteProducts(){ 
+		var rows = $("#productTable").datagrid('getChecked');
+		var ids="";
+		var i = 0;
+		//判断是否选中行  
+        if (rows.length==0) {
+           $.messager.alert("提示", "请选择要删除的行！", "info");  
+            return;  
+        }else{       
+            //批量获取选中行的评估模板ID  
+            for (i = 0; i < rows.length;i++) {
+                if (ids =="") {  
+                    ids = rows[i].id;  
+                } else {  
+                    ids = rows[i].id + "," + ids;  
+                }                 
+            }  
+        }        
+            $.messager.confirm('提示', '是否删除选中数据?', function (r) {  
+                if (!r) {  
+                    return;  
+                } 
+                $.ajax({
+					url:"/product/deletes",
+					type:"GET",
+					dataType:"json",
+					data:{
+						ids:ids
+					},
+					success:function(i){
+							if(i>0){
+								alert("删除成功！");
+								$("#productTable").datagrid('load')
+							}else{
+								alert("删除失败！"); 
+							}
+					},
+					error:function(){
+							alert("删除失败！"); 
+					}	
+		})
+            })
+					
+	}
+</script>
+<body class="easyui-layout" data-options="fit:true">
+	<!-- 产品列表 -->
+	<div id="productTable"></div>
+	<!-- 菜单栏 -->
+	<div id="itop">
+		<div id="tb" style="padding: 3px">
+			<span>上游渠道名:</span> <input id="itemid"
+				style="line-height: 26px; border: 1px solid #ccc"> <span>关键字:</span>
+			<input id="keyword" style="line-height: 26px; border: 1px solid #ccc">
+			<a href="#" class="easyui-linkbutton" plain="true"
+				onclick="doSearch()">搜索</a>
+		</div>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true"
+			onclick="insertProduct()">新增</a> <a href="#"
+			class="easyui-linkbutton" iconCls="icon-remove" plain="true"
+			onclick="deleteProducts()">删除选中</a>
+	</div>
+	<!--新增产品  -->
+	<div id="editOrAdd">
+		<table style="margin: 0 auto">
+			<tr align="center" height="50px" style="">
+				<th align="right">上游渠道名：</th>
+				<td  align="left" style="" width="150px"><select id = "channel_id"
+					class="easyui-combobox" style="width: 150px">
+						<option>1</option>
+						<option>2</option>
+						<option>3</option>
+						<option>4</option>
+						<lect></td>
+			</tr>
+			<tr align="center" height="50px">
+				<th align="right">价格：</th>
+				<td align="left"><input id = "price" class="easyui-validatebox"></td>
+			</tr>
+			<tr align="center" height="50px">
+				<th align="right">产品名：</th>
+				<td align="left"><input id = "product_name" class="easyui-validatebox"></td>
+			</tr>
+		</table>
+	</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+package cn.ssm.controller.channel;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import cn.ssm.entity.ChannelDown;
+import cn.ssm.entity.channel.ChannelType;
+import cn.ssm.entity.channel.PageBean;
+import cn.ssm.service.master.ChannelDownService;
+import cn.ssm.utils.UUIDUtils;
+
+/**
+ * @Title: ChannelDownDataController.java
+ * @Package cn.ssm.controller.channel
+ * @Description: 下游渠道数据的CURD
+ * @author 二组
+ * @date 2017年9月21日
+ * @version V1.0
+ */
+@RestController
+@EnableAutoConfiguration
+@RequestMapping(value = "/channelDown")
+public class ChannelDownDataController {
+	@Autowired
+	ChannelDownService channelDownService;
+	
+
+	@RequestMapping(value = "/add")
+	/**
+	 * 用postman测试有问题，直接赋值没问题，有待页面验证
+	 * 
+	 * @param top
+	 * @return
+	 */
+	public ChannelDown add(ChannelDown down) {
+		// down.setChannelName("大鸡儿妹子");
+		// down.setId("joi3");
+		// down.setType(3);
+		down.setId(UUIDUtils.getUUID());
+		return channelDownService.insertDown(down);
+	}
+
+	/**
+	 * 获取要实体数据 可以用于修改数据时的回显
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "select")
+	public ChannelDown select(String id) {
+		return channelDownService.selectByPrimaryKey(id);
+	}
+
+	/**
+	 * 删除某条记录
+	 * 
+	 * @param id
+	 *            id
+	 * @return 影响行数
+	 */
+	@RequestMapping(value = "delete")
+	public Integer delete(String id) {
+		return channelDownService.deleteByPrimaryKey(id);
+	}
+
+	/**
+	 * 修改后的实体数据更新到数据库中去
+	 * 
+	 * @param down
+	 *            用来封装数据的实体
+	 * @return 影响行数
+	 */
+	@RequestMapping(value = "update")
+	public Integer update(ChannelDown down) {
+		return channelDownService.updateBySelective(down);
+
+	}
+
+	/**
+	 * 通过渠道名称模糊查询
+	 * 
+	 * @param string
+	 * @return
+	 * @author 张长江
+	 */
+	@RequestMapping("/selectByChannelDownName")
+	public List<ChannelDown> selectByChannelName(String string) {
+		return channelDownService.selectByChannelName(string);
+	}
+
+	/**
+	 * 通过渠道类型模糊查询
+	 * 
+	 * @param string
+	 * @return
+	 * @author 张长江
+	 */
+	@RequestMapping("/selectByChannelDownType")
+	public List<ChannelType> selectByChannelType(String string) {
+		return channelDownService.selectByChannelType(string);
+	}
+
+	/**
+	 * 分页模糊查找下游
+	 * 
+	 * @author 韩超
+	 * @param page 当前页
+	 * @param rows 每页显示条数
+	 * @param kw 关键字          
+	 * @param type 类型         
+	 * @return
+	 */
+	@RequestMapping(value = "findDownByConditionPages")
+	public PageBean<ChannelDown> findDownByConditionPages(Integer page,Integer rows,
+			ChannelDown channelDown) {
+		PageBean<ChannelDown> bean = channelDownService.findByConditionPages(page, rows,channelDown);
+		return bean;
+
+	}
+
+}

@@ -1,0 +1,114 @@
+package cn.ssm.service.impl.master;
+
+import cn.ssm.entity.ChannelDown;
+import cn.ssm.entity.ChannelDownExample;
+import cn.ssm.entity.ChannelTop;
+import cn.ssm.entity.channel.ChannelType;
+import cn.ssm.entity.channel.ChannelTypeExample;
+import cn.ssm.entity.channel.PageBean;
+import cn.ssm.entity.channel.ChannelTypeExample.Criteria;
+import cn.ssm.mapper.master.ChannelDownMapper;
+import cn.ssm.mapper.master.ChannelTypeMapper;
+import cn.ssm.service.impl.BaseServiceImpl;
+import cn.ssm.service.master.ChannelDownService;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class ChannelDownServiceImpl extends BaseServiceImpl<ChannelDown, ChannelDownExample>
+		implements ChannelDownService {
+
+	@Override
+	@Transactional
+	public int insert(ChannelDown entity) {
+		return super.insert(entity);
+	}
+
+	@Override
+	@Transactional
+	public int updateBySelective(ChannelDown entity) {
+		return super.updateBySelective(entity);
+	}
+
+	@Override
+	@Transactional
+	public int deleteByPrimaryKey(String id) {
+		return super.deleteByPrimaryKey(id);
+	}
+
+	@Autowired
+	private ChannelDownMapper channelDownMapper;
+	@Override
+	@Transactional
+	public List<ChannelDown> selectByChannelName(String string) {
+		String param = "%" + string + "%";
+		return channelDownMapper.selectByChannelName(param);
+	}
+
+	@Override
+	@Transactional
+	public List<ChannelType> selectByChannelType(String string) {
+		String s = "%"+string+"%";
+		List<ChannelType> li = channelDownMapper.selectByChannelType(s);
+		return li;
+	}
+
+	@Override
+	public ChannelDown insertDown(ChannelDown down) {
+		int insert = super.insert(down);
+		ChannelDown channelDown ;
+		if( insert == 0) {
+			channelDown = new ChannelDown();
+		}else {
+			channelDown = super.selectByPrimaryKey(down.getId());
+		}
+		return channelDown;
+	}
+	
+	@Autowired
+	private ChannelTypeMapper channelTypeMapper;
+	public PageBean<ChannelDown> findByConditionPages(int currPage, int pageSize,ChannelDown channelDown) {
+		PageBean<ChannelDown> bean = new PageBean<>();
+		ChannelDownExample example = new ChannelDownExample();
+		cn.ssm.entity.ChannelDownExample.Criteria criteria = example.createCriteria();
+		//如果名称不为空，添加名称条件
+		if (null!=channelDown.getChannelName() &&!channelDown.getChannelName().equals("")) {
+			criteria.andChannelNameLike("%"+channelDown.getChannelName()+"%");
+		
+		}
+		Integer tid=null;
+//		//如果类型不为空，添加类型条件
+//		if (channelDown.getName() != null&&!channelDown.getName().equals("")) {
+//			ChannelTypeExample example2 = new ChannelTypeExample();
+//			Criteria criteria2 = example2.createCriteria();
+//			criteria2.andNameLike("%"+channelDown.getName()+"%");
+//			List<ChannelType> list = channelTypeMapper.selectByExample(example2);
+//			if (list.size()>0) {
+//				tid=list.get(0).getTypeid();
+//				criteria.andTypeEqualTo(tid);
+//			
+//			}
+//		}
+		Map<String,Object> params = new HashMap<String, Object>();
+		params.put("channelName", "%"+channelDown.getChannelName()+"%");
+		params.put("channelType", tid);
+		int totalCount = channelDownMapper.countByExample(params);
+		params.put("page", (currPage-1)*pageSize);
+		params.put("pageSize", pageSize);
+		//查询所有条件数据
+		List<ChannelDown> list = channelDownMapper.quryByConditionPage(params);
+		bean.setRows(list);
+		bean.setCurrPage(currPage);
+		bean.setPageSize(pageSize);
+		bean.setTotal(totalCount);
+		return bean;
+	}
+
+
+}

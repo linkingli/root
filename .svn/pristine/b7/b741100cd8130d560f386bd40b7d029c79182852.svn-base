@@ -1,0 +1,80 @@
+package cn.ssm.mapper.master;
+
+import java.util.List;
+
+import cn.ssm.entity.DivideType;
+
+public interface DivideTypeMapper {
+	/**
+	 * 
+	 * @author 1-ml
+	 * @Title: chan'xun   
+	 * @Description: 查询所有   
+	 * @param: @return      
+	 * @return: List<DivideType>      
+	 * @throws
+	 */
+	List<DivideType> selectAll();
+	
+	/**
+	 * 
+	 * @author 1-ml
+	 * @Title: selectTotal   
+	 * @Description: 查询所有数据条数   
+	 * @param: @return      
+	 * @return: int      
+	 * @throws
+	 */
+	public int selectTotal();
+	/**
+	 * 
+	 * @author 1-ml
+	 * @Title: updateById   
+	 * @Description: 根据id修改信息   
+	 * @param: @param divideType      
+	 * @return: void      
+	 * @throws
+	 */
+	void updateById(DivideType divideType);
+	
+	/**
+	 * 
+	 * @author 1-ml
+	 * @Title: deleteById   
+	 * @Description: 根据id批量删除   
+	 * @param: @param id      
+	 * @return: void      
+	 * @throws
+	 */
+	void deleteById(List id);
+	/**
+	 * 
+	 * @author 1-ml
+	 * @Title: insert   
+	 * @Description: 添加数据   
+	 * @param: @param divideType      
+	 * @return: void      
+	 * @throws
+	 */
+	 void insert(DivideType divideType);
+	 
+	 /**
+	  * 根据id查询数据
+	  */
+	 DivideType selectById(String id);
+	
+	/**
+	 * 查询所有方法
+	 * @param page
+	 * @param rows
+	 * @param keyword
+	 * @return
+	 */
+	List selectAll(int page, int rows, String keyword);
+	
+	/**
+	 * 查询总条数
+	 * @return
+	 */
+	Integer selectTotal(String keyword);
+}

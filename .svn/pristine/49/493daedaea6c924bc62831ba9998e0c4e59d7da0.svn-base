@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/js/jquery.easyui.min.js"></script>
+<link href="/js/icon.css" rel="stylesheet" />
+<link href="/js/default/easyui.css" rel="stylesheet" />
+<link href="/easyui/themes/icon.css" rel="stylesheet" />
+</head>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#divideTypeGrid').datagrid({
+			height : '100%',
+			url : '',
+			method : '',
+			idField : 'id',
+			title : '成本分摊模板',
+			striped : true,
+			fitColumns : true,
+			singleSelect : false,
+			rownumbers : true,
+			pagination : true,
+			nowrap : false,
+			pageSize : 10,
+			pageList : [ 10, 20, 50, 100, 150, 200 ],
+			showFooter : true,
+			columns : [ [ {
+				field : 'ck',
+				checkbox : true
+			},{
+				field : 'name',
+				title : '存量开始月',
+				width : '300px',
+				align : 'left'
+			},{
+				field : 'name',
+				title : '存量结束月',
+				width : '300px',
+				align : 'left'
+			},{
+				field : 'name',
+				title : '上游比例',
+				width : '300px',
+				align : 'left'
+			}, {
+				field : 'id',
+				title : '下游比例',
+				width : '300px',
+				align : 'left'
+			}, {
+				field : 'channelName',
+				title : '别名',
+				width : '200px',
+				align : 'left'
+			}, {
+				field : 'channelType',
+				title : '备注',
+				width : '360px',
+				align : 'left'
+			} ] ],
+			toolbar : [{
+				iconCls : 'icon-add',
+				text : '添加',
+				handler : function(){
+					$('#editOrAdd').dialog({
+						height : '50%',
+						width : '25%',
+						modal : true,
+						title : '模板新增',
+						draggable : false,
+						buttons : [{
+							text : '提交',
+							handler : function(){
+								
+							}
+						},{
+							text : '取消',
+							handler : function(){
+								
+							}
+						}],
+					});
+				}
+			},{
+				iconCls : 'icon-edit',
+				text : '编辑',
+				handler : function(){
+					$('#editOrAdd').dialog({
+						height : '50%',
+						width : '25%',
+						modal : true,
+						title : '模板编辑',
+						draggable : false,
+						buttons : [{
+							text : '提交',
+							handler : function(){
+								
+							}
+						},{
+							text : '取消',
+							handler : function(){
+								
+							}
+						}],
+					});
+				}
+			},{
+				iconCls : 'icon-remove',
+				text : '删除',
+				handler : function(){
+					$.messager.confirm('提示', '确定删除这条数据吗?', function(r){
+						if (r){
+							
+						}
+					});
+				}
+			}]
+		});
+		$('#divideTypeGrid').load();
+	});
+</script>
+<body class="easyui-layout" data-options="fit:true">
+	<div id="divideTypeGrid"></div>
+	<div id="editOrAdd">
+		<table style="margin: 0 auto">
+			<tr align="center" height="50px">
+				<th align="right">存量开始月：</th>
+				<td align="left"><input class="easyui-datebox" type="text"></td>
+			</tr>
+			<tr align="center" height="50px">
+				<th align="right">存量结束月：</th>
+				<td align="left"><input class="easyui-datebox"></td>
+			</tr>
+			<tr align="center" height="50px">
+				<th align="right">上游比例：</th>
+				<td align="left"><input class="easyui-validatebox"></td>
+			</tr>
+			<tr align="center" height="50px">
+				<th align="right">下游比例：</th>
+				<td align="left"><input class="easyui-validatebox"></td>
+			</tr>
+			<tr align="center" height="50px">
+				<th align="right">别名：</th>
+				<td align="left"><input class="easyui-validatebox"></td>
+			</tr>
+			<tr>
+				<th align="right">备注：</th>
+				<td align="left"><textarea rows="4" cols="22"></textarea></td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>

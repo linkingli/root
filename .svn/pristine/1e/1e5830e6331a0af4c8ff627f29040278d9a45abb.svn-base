@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ssm.mapper.master.DivideTypeMapper">
+	<resultMap id="divideTypeMap" type="cn.ssm.entity.DivideType">
+		
+		<id column="id" jdbcType="VARCHAR" property="id" />
+		<result column="top" jdbcType="DECIMAL" property="top" />
+		<result column="down" jdbcType="DECIMAL" property="down" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="rmark" jdbcType="VARCHAR" property="rmark" />
+	</resultMap>
+	<!-- 查询所有数据 -->
+	<select id="selectAll" resultMap="divideTypeMap">
+		select * from divide_type limit #{arg0},#{arg1} 
+	</select>
+	
+	<!-- 查询数据总条数 -->
+	
+	<select id="selectTotal" resultType="Integer" parameterType="String">
+		select count(*) from divide_type <if test="_parameter!=null">
+		where name like concat('%',#{_parameter},'%')
+		</if>
+	</select>
+	<!-- 根据id修改数据 -->
+	<update id="updateById" parameterType="cn.ssm.entity.DivideType" >
+		update divide_type set 
+		monthSizeStart=#{monthSizeStart},
+		monthSizeEnd=#{monthSizeEnd},
+		top = #{top} ,
+		down = #{down},
+		name = #{name},
+		remark = #{remark}
+		where
+		id = #{id}	
+	</update>
+	<!-- 根据id查询数据 -->
+	<select id="selectById" resultMap="divideTypeMap">
+		select * from divide_type where id = #{id}
+	</select>
+	
+	<!--根据id删除数据，批量删除  -->
+	<delete id="deleteById" parameterType="String">
+		delete from divide_type where id in 
+		<foreach collection="list" item="id" open="(" separator="," close=")">
+		#{id}
+		</foreach>
+	</delete>
+	
+	<!-- 增加数据 -->
+	<insert id="insert" parameterType="cn.ssm.entity.DivideType" >
+		insert into divide_type (id,top,down,name,remark) values (#{id},#{top},#{down},#{name},#{remark})
+		
+	</insert>
+</mapper>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+上游导入：
+<form id="import-top-form" action="/importChannelTop" method="post"
+      enctype="multipart/form-data">
+    <input  type="file" name="file"/><input type="button" id="top_btn" value="上传"/>
+</form>
+下游导入：
+<form id="import-down-form" action="/importChannelDown" method="post"
+      enctype="multipart/form-data">
+    <input type="file" name="file"/><input type="button" id="down_btn" value="上传"/>
+</form>
+<script type="text/javascript" src="js/jquery-1.10.2.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $('#top_btn').on('click',function(){
+            $('#import-top-form').submit();
+        })
+        $('#down_btn').on('click',function(){
+            $('#import-down-form').submit();
+        })
+    })
+</script>
+</body>
+</html>

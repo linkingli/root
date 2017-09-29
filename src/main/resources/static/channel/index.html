@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" />
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/js/jquery.easyui.min.js"></script>
+<link href="/js/icon.css" rel="stylesheet" />
+<link href="/js/default/easyui.css" rel="stylesheet" />
+</head>
+
+<script>
+	$(document).ready(function() {
+		$('#magazineGrid').datagrid({
+			height : '100%',
+			url : '/channelTop/findTopByConditionPages',
+			method : 'POST',
+			queryParams:{
+				
+			},
+			idField : 'id',
+			striped : true,
+			fitColumns : true,
+			singleSelect : false,
+			rownumbers : true,
+			pagination : true,
+			nowrap : false,
+			pageSize : 10,
+			pageList : [ 10, 20, 50, 100, 150, 200 ],
+			showFooter : true,
+			columns : [ [ {
+				field : 'ck',
+				checkbox : true
+			}, {
+				field : 'name',
+				title : '名称',
+				width : 180,
+				align : 'left'
+			}, {
+				field : 'id',
+				title : 'id',
+				width : 150,
+				align : 'left'
+			}, {
+				field : 'channelName',
+				title : 'channelName',
+				width : 100,
+				align : 'left'
+			}, {
+				field : 'channelType',
+				title : 'channelType',
+				width : 100,
+				align : 'left'
+			} ] ]		
+		});
+	});
+	$('#magazineGrid').load();
+</script>
+<body class="easyui-layout" data-options="fit:true">
+
+
+
+<div id="magazineGrid"></div>
+</body>
+</html>
